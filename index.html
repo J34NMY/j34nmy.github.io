@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateurs Citoyens — Simuler pour Décider</title>
+  <meta name="description" content="Des simulateurs gratuits et indépendants pour comprendre votre retraite, votre fiscalité et prendre les bonnes décisions. Développés bénévolement par J34NMY.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #1B3A5C;
+      --navy-light:  #2A5280;
+      --green:       #15803d;
+      --green-light: #f0fdf4;
+      --cream:       #F7F6F3;
+      --gold:        #C9A84C;
+      --purple:      #7c3aed;
+      --slate:       #6B7280;
+      --white:       #FFFFFF;
+      --border:      #E5E7EB;
+      --blue:        #2563eb;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      padding: 80px 24px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, rgba(201,168,76,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(21,128,61,.10) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.18;
+      max-width: 760px;
+      margin: 0 auto 16px;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.75);
+      max-width: 580px;
+      margin: 0 auto 14px;
+      line-height: 1.7;
+    }
+    .hero-detail {
+      font-size: .88rem;
+      color: rgba(255,255,255,.55);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+    .hero-detail strong { color: rgba(255,255,255,.8); font-weight: 500; }
+
+    /* ── STATS ── */
+    .strip {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+    }
+    .strip-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      gap: 8px;
+    }
+    .stat { text-align: center; padding: 10px 20px; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: block;
+      line-height: 1;
+    }
+    .stat-num span { color: var(--gold); }
+    .stat-label {
+      font-size: .73rem;
+      font-weight: 500;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      display: block;
+      margin-top: 5px;
+    }
+    .strip-div { width: 1px; height: 36px; background: var(--border); }
+
+    /* ── SECTION VALEURS ── */
+    .valeurs {
+      max-width: 900px;
+      margin: 56px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .valeur-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 22px;
+      text-align: center;
+    }
+    .valeur-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .valeur-card h3 {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .valeur-card p {
+      font-size: .82rem;
+      color: var(--slate);
+      line-height: 1.65;
+    }
+
+    /* ── SIMULATEURS ── */
+    .simulateurs {
+      max-width: 900px;
+      margin: 56px auto;
+      padding: 0 24px;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .simulateurs h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--navy);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* Grille simulateurs */
+    .sims-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .sim-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .sim-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(27,58,92,.12);
+    }
+    .sim-card-header {
+      padding: 28px 26px 20px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .sim-card-header.retraite { border-top: 4px solid var(--navy); }
+    .sim-card-header.fiscalite { border-top: 4px solid var(--purple); }
+
+    .sim-badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .sim-badge.gratuit { background: var(--green-light); color: var(--green); }
+    .sim-badge.beta    { background: #fef3c7; color: #92400e; }
+
+    .sim-card-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .sim-card-header p {
+      font-size: .83rem;
+      color: var(--slate);
+      line-height: 1.6;
+    }
+
+    .sim-card-body {
+      padding: 20px 26px;
+      flex: 1;
+    }
+    .sim-features {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    .sim-features li {
+      font-size: .82rem;
+      color: var(--slate);
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .sim-features li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .sim-versions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .sim-version-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 7px;
+      font-size: .82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .15s, opacity .15s;
+      flex: 1;
+      justify-content: center;
+      text-align: center;
+    }
+    .sim-version-btn:hover { transform: translateY(-2px); opacity: .9; }
+    .sim-version-btn.guide  { background: var(--purple); color: #fff; }
+    .sim-version-btn.expert { background: var(--gold); color: var(--navy); }
+    .sim-version-btn.main   { background: var(--navy); color: #fff; }
+    .sim-version-btn.coming { background: var(--cream); color: var(--slate); border: 1px solid var(--border); cursor: default; }
+    .sim-version-btn.coming:hover { transform: none; opacity: 1; }
+
+    .sim-reglementation {
+      font-size: .73rem;
+      color: var(--slate);
+      background: var(--cream);
+      border-radius: 6px;
+      padding: 8px 12px;
+      line-height: 1.6;
+    }
+
+    /* ── KO-FI ── */
+    .kofi-section {
+      max-width: 600px;
+      margin: 0 auto 56px;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .kofi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 28px;
+    }
+    .kofi-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .kofi-card p {
+      font-size: .85rem;
+      color: var(--slate);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .kofi-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 28px;
+      background: #FF5E5B;
+      color: #fff;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .15s, opacity .15s;
+    }
+    .kofi-btn:hover { transform: translateY(-2px); opacity: .9; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,.65);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    footer p { font-size: .8rem; line-height: 1.8; }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .footer-links a {
+      font-size: .82rem;
+      color: rgba(255,255,255,.7);
+    }
+    .disclaimer {
+      max-width: 640px;
+      margin: 16px auto 0;
+      font-size: .72rem;
+      color: rgba(255,255,255,.4);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 640px) {
+      .sims-grid  { grid-template-columns: 1fr; }
+      .valeurs    { grid-template-columns: 1fr; }
+      .strip-div  { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Simulateurs Citoyens · Outils éducatifs gratuits</p>
+  <h1>Simuler pour <em>Décider</em></h1>
+  <p class="hero-sub">Des simulateurs gratuits et indépendants pour comprendre votre retraite, votre fiscalité et prendre les bonnes décisions.</p>
+  <p class="hero-detail">
+    <strong>100% gratuit · Aucune donnée transmise · Open source</strong><br>
+    Développé bénévolement par J34NMY · Résultats à valider avec les outils officiels
+  </p>
+</section>
+
+<!-- STATS -->
+<div class="strip">
+  <div class="strip-inner">
+    <div class="stat">
+      <span class="stat-num">2<span></span></span>
+      <span class="stat-label">Simulateurs disponibles</span>
+    </div>
+    <div class="strip-div"></div>
+    <div class="stat">
+      <span class="stat-num">100<span>%</span></span>
+      <span class="stat-label">Gratuit &amp; open source</span>
+    </div>
+    <div class="strip-div"></div>
+    <div class="stat">
+      <span class="stat-num">0<span></span></span>
+      <span class="stat-label">Données transmises</span>
+    </div>
+    <div class="strip-div"></div>
+    <div class="stat">
+      <span class="stat-num">∞<span></span></span>
+      <span class="stat-label">Simulations possibles</span>
+    </div>
+  </div>
+</div>
+
+<!-- VALEURS -->
+<div class="valeurs">
+  <div class="valeur-card">
+    <span class="valeur-icon">🔍</span>
+    <h3>Simuler</h3>
+    <p>Modélisez votre situation réelle à partir de vos données personnelles pour obtenir des estimations précises.</p>
+  </div>
+  <div class="valeur-card">
+    <span class="valeur-icon">💡</span>
+    <h3>Comprendre</h3>
+    <p>Visualisez l'impact de chaque choix — quotité, surcotisation, rachat — sur vos revenus futurs.</p>
+  </div>
+  <div class="valeur-card">
+    <span class="valeur-icon">✅</span>
+    <h3>Décider</h3>
+    <p>Abordez les rendez-vous officiels avec des éléments concrets pour discuter de votre situation en connaissance de cause.</p>
+  </div>
+</div>
+
+<!-- SIMULATEURS -->
+<section class="simulateurs">
+  <p class="section-eyebrow">Nos outils</p>
+  <h2>Les simulateurs disponibles</h2>
+
+  <div class="sims-grid">
+
+    <!-- CARTE RETRAITE PROGRESSIVE -->
+    <div class="sim-card">
+      <div class="sim-card-header retraite">
+        <span class="sim-badge gratuit">Gratuit</span>
+        <h3>Retraite Progressive</h3>
+        <p>Fonctionnaire d'État — Estimez vos revenus pendant et après votre période de retraite progressive.</p>
+      </div>
+      <div class="sim-card-body">
+        <ul class="sim-features">
+          <li>Calcul traitement + pension provisoire par quotité</li>
+          <li>Pension définitive estimée avec taux de remplacement</li>
+          <li>Analyse rentabilité surcotisation (3 scénarios)</li>
+          <li>Analyse rachat d'années et surcotisation rétroactive</li>
+          <li>Export PDF des résultats</li>
+          <li>Méthode SRE — base 360 j/an</li>
+        </ul>
+        <div class="sim-versions">
+          <a href="https://j34nmy.github.io/simulateur-retraite-progressive/simulateur_retraite_progressive_V06_guide.html"
+             class="sim-version-btn guide" target="_blank">✨ Mode Guidé</a>
+          <a href="https://j34nmy.github.io/simulateur-retraite-progressive/simulateur_retraite_progressive_V06_expert.html"
+             class="sim-version-btn expert" target="_blank">🔧 Mode Expert</a>
+        </div>
+        <a href="https://j34nmy.github.io/simulateur-retraite-progressive/"
+           class="sim-version-btn main" target="_blank" style="display:flex;margin-bottom:12px;">
+          🏛️ Voir le simulateur complet
+        </a>
+        <div class="sim-reglementation">
+          📋 <strong>Gel 2026</strong> — LFSS 2026, art. 105 (suspension réforme 2023 jusqu'au 01/01/2028)<br>
+          📋 <strong>V04.2.8</strong> — Réforme 2023, Décret n°2023-799 (départs à partir de 2028)
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTE IMPÔT / PER -->
+    <div class="sim-card">
+      <div class="sim-card-header fiscalite">
+        <span class="sim-badge gratuit">Gratuit</span>
+        <h3>Mon Impôt Malin</h3>
+        <p>Optimisez votre fiscalité — simulez l'impact d'un PER, comparez les stratégies d'épargne et réduisez votre impôt.</p>
+      </div>
+      <div class="sim-card-body">
+        <ul class="sim-features">
+          <li>Calcul impôt sur le revenu (barème progressif)</li>
+          <li>Simulation versements PER et déduction fiscale</li>
+          <li>Comparaison PER vs placements alternatifs</li>
+          <li>Stratégie de sortie PER optimisée</li>
+          <li>Assistant fiscal guidé en 12 étapes</li>
+          <li>Export PDF des résultats</li>
+        </ul>
+        <div class="sim-versions">
+          <a href="https://j34nmy.github.io/simulateur-impot-per-placement/"
+             class="sim-version-btn main" target="_blank">💰 Accéder au simulateur</a>
+        </div>
+        <div class="sim-reglementation" style="margin-top:12px;">
+          📋 Barème fiscal 2024 · PER loi PACTE · Plafond épargne retraite<br>
+          📋 Applicable à tous les contribuables français
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- KO-FI -->
+<div class="kofi-section">
+  <div class="kofi-card">
+    <h3>☕ Soutenir le projet</h3>
+    <p>Ces simulateurs sont développés bénévolement et mis à disposition gratuitement. Si vous les trouvez utiles, vous pouvez soutenir leur développement avec un petit don — aucune obligation.</p>
+    <a href="https://ko-fi.com/j34nmy" class="kofi-btn" target="_blank">
+      ☕ Offrir un café sur Ko-fi
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://j34nmy.github.io/simulateur-retraite-progressive/">Retraite Progressive</a>
+    <a href="https://j34nmy.github.io/simulateur-impot-per-placement/">Mon Impôt Malin</a>
+    <a href="https://github.com/J34NMY" target="_blank">GitHub J34NMY</a>
+    <a href="https://www.info-retraite.fr" target="_blank">info-retraite.fr</a>
+    <a href="https://ensap.gouv.fr" target="_blank">ensap.gouv.fr</a>
+  </div>
+  <p>
+    <strong style="color:rgba(255,255,255,.85);">Simulateurs Citoyens</strong> —
+    Développé bénévolement par <a href="https://github.com/J34NMY" target="_blank">J34NMY</a> ·
+    Conçu avec <a href="https://www.anthropic.com" target="_blank">Claude IA (Anthropic)</a> ·
+    Licence CC BY-NC-SA 4.0
+  </p>
+  <div class="disclaimer">
+    Outils éducatifs non officiels. Les résultats sont des estimations et ne constituent pas un avis juridique ou fiscal.
+    Pour toute décision importante, consultez les outils officiels de l'État (info-retraite.fr, ensap.gouv.fr, impots.gouv.fr)
+    ou un professionnel qualifié. Aucune donnée saisie n'est transmise.
+  </div>
+</footer>
+
+</body>
+</html>
